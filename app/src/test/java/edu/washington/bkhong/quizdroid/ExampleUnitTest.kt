@@ -1,4 +1,4 @@
-package edu.washington.bennyn.quizdroid
+package edu.washington.bkhong.quizdroid
 
 import org.junit.Test
 

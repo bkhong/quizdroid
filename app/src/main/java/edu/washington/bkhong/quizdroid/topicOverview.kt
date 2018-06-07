@@ -17,27 +17,26 @@ class TopicOverview : android.support.v4.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val subjectName = getView()!!.findViewById<TextView>(R.id.subjectName)
-        val numQuestions = getView()!!.findViewById<TextView>(R.id.numQuestions)
-        val description = getView()!!.findViewById<TextView>(R.id.description)
+        val subjectBox = getView()!!.findViewById<TextView>(R.id.subjectName)
+        val numQuestionsBox = getView()!!.findViewById<TextView>(R.id.numQuestions)
+        val descriptionBox = getView()!!.findViewById<TextView>(R.id.description)
         val button = getView()!!.findViewById<Button>(R.id.beginButton)
 
-        val subject = arguments!!.getString("subject")
-        val numOfQuestions = 4 //set from JSON data later
-        val details = "Description placeholder that will be initialized later!"
-        val numQuestionsText = "This topic contains $numOfQuestions questions"
+        val subject = arguments!!.getInt("subject")
+        val totalQuestions = QuizApp.offlineRepository.getTopic(subject).questions.size
+        val numQuestionsText = "This topic contains $totalQuestions questions"
 
-        subjectName.text = subject
-        description.text = details
-        numQuestions.text = numQuestionsText
+        subjectBox.text = QuizApp.offlineRepository.getTopic(subject).title
+        descriptionBox.text = QuizApp.offlineRepository.getTopic(subject).longDesc
+        numQuestionsBox.text = numQuestionsText
         button.setOnClickListener {
             val fragment = QuestionPage()
 
             val bundle = Bundle()
-            bundle.putString("subject", subject)
-            bundle.putInt("questionNum", 1)
-            bundle.putInt("totalQuestions", numOfQuestions)
-
+            bundle.putInt("subject", subject)
+            bundle.putInt("questionNum", 0)
+            bundle.putInt("totalQuestions", totalQuestions)
+            bundle.putInt("score", 0)
             fragment.arguments = bundle
 
             val transaction = fragmentManager!!.beginTransaction()

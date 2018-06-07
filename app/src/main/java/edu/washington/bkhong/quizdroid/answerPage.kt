@@ -21,20 +21,26 @@ class AnswerPage : Fragment() {
 
         val myAnsBox = getView()!!.findViewById<TextView>(R.id.myAns)
         val actualAnsBox = getView()!!.findViewById<TextView>(R.id.actualAns)
-        val score = getView()!!.findViewById<TextView>(R.id.score)
+        val scoreBox = getView()!!.findViewById<TextView>(R.id.score)
         val btn = getView()!!.findViewById<Button>(R.id.nextOrFinalBtn)
 
+        var score = arguments!!.getInt("score")
+        val subject = arguments!!.getInt("subject")
         val totalQuestions = arguments!!.getInt("totalQuestions")
         val questionNum = arguments!!.getInt("questionNum")
         val myAnswer = arguments!!.getInt("myAnswer")
 
-        myAnsBox.text = myAnswer.toString()
-        actualAnsBox.text = 1.toString() //set to an actual answer later
+        myAnsBox.text = myAnswer.toString() //this is a number, so later set it to an actual answer from the question objects
+        actualAnsBox.text = QuizApp.offlineRepository.getTopic(subject).questions[questionNum].answer.toString()
 
-        val scoreText = "You have $questionNum out of $totalQuestions correct!" //turn questionNum into the correct # of answers lately
-        score.text = scoreText
+        if (myAnswer == QuizApp.offlineRepository.getTopic(subject).questions[questionNum].answer) {
+            score += 1
+        }
 
-        if (totalQuestions == questionNum) {
+        val scoreText = "You have ${score} out of $totalQuestions correct!" //turn questionNum into the correct # of answers lately
+        scoreBox.text = scoreText
+
+        if (totalQuestions == questionNum + 1) {
             btn.text = "Finish"
         }
 
@@ -44,11 +50,10 @@ class AnswerPage : Fragment() {
                 startActivity(intent)
             } else {
                 val fragment = QuestionPage()
-
                 val bundle = Bundle()
+                bundle.putInt("score", score)
                 bundle.putInt("totalQuestions", totalQuestions)
                 bundle.putInt("questionNum", questionNum + 1)
-
                 fragment.arguments = bundle
 
                 val transaction = fragmentManager!!.beginTransaction()
